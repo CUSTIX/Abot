@@ -1,0 +1,46 @@
+# Production-style stack on http://localhost:8081: the prod image (React built in, gunicorn,
+# DEBUG off). Run: docker compose -f docker-compose.prod.yml -p sahod-prod up --build -d
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: sahod
+      POSTGRES_USER: sahod
+      POSTGRES_PASSWORD: prod-local-password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sahod -d sahod"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      target: prod
+    environment:
+      DJANGO_SECRET_KEY: local-prod-style-key-not-for-real-use-0123456789
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_STATIC_MANIFEST: "true"
+      POSTGRES_DB: sahod
+      POSTGRES_USER: sahod
+      POSTGRES_PASSWORD: prod-local-password
+      POSTGRES_HOST: db
+      DEMO_MODE: "true"
+      DEMO_RESET_ON_START: "true"
+      DEMO_PASSWORD: sahod-demo
+    ports:
+      - "127.0.0.1:8081:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz/', timeout=3)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

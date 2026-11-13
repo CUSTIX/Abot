@@ -1,0 +1,19 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["frontend", "**/migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = ["S101", "S105", "S106"]
+"conftest.py" = ["S101", "S105"]
+# Fake demo data: `random` is fine for fake amounts and dates (not security).
+"money/management/commands/seed_demo.py" = ["S311"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+testpaths = ["config", "core", "accounts", "money", "planning"]
+python_files = ["test_*.py"]
+filterwarnings = ["ignore:No directory at:UserWarning"]

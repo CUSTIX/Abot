@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:17
+    env_file: .env
+    # No published port: only the api container can reach Postgres.
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      target: dev
+    env_file: .env
+    command: >
+      sh -c "python manage.py migrate --noinput && python manage.py createcachetable
+      && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "127.0.0.1:8001:8000"
+    volumes:
+      - .:/app  # dev only: live reload from the source tree
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: node:22-slim
+    working_dir: /frontend
+    # Vite dev server with hot reload. /api is proxied to the api container, so the browser sees
+    # one origin and session cookies + CSRF work exactly like in production.
+    command: sh -c "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0"
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "127.0.0.1:5173:5173"
+    volumes:
+      - ./frontend:/frontend
+      - frontend_modules:/frontend/node_modules  # Linux node_modules stay in the container
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  frontend_modules:

@@ -1,0 +1,11 @@
+.git
+.env
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+staticfiles
+**/node_modules
+frontend/dist
+.vscode
+.idea
