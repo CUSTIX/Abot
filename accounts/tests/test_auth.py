@@ -58,9 +58,9 @@ def test_login_logout_and_me(make_user):
     assert ok.status_code == 200
     # Login rotates the CSRF token; the app fetches a fresh one.
     client.credentials(HTTP_X_CSRFTOKEN=client.get("/api/auth/csrf/").json()["csrfToken"])
-    assert client.get("/api/auth/me/").json()["username"] == "pedro"
+    assert client.get("/api/auth/me/").json()["user"]["username"] == "pedro"
     assert client.post("/api/auth/logout/").status_code == 204
-    assert client.get("/api/auth/me/").status_code == 403
+    assert client.get("/api/auth/me/").json() == {"user": None}
 
 
 def test_login_without_a_csrf_token_is_refused(make_user):
@@ -99,7 +99,7 @@ def _api_urls(resolver=None, prefix=""):
 
 
 def test_every_api_url_needs_a_signed_in_user():
-    public = {"api/auth/csrf/", "api/auth/signup/", "api/auth/login/"}
+    public = {"api/auth/csrf/", "api/auth/signup/", "api/auth/login/", "api/auth/me/"}
     checked = 0
     for pattern in _api_urls():
         if not pattern.startswith("api/") or pattern in public:

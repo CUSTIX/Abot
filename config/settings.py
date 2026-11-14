@@ -47,6 +47,7 @@ AUTH_USER_MODEL = "accounts.User"
 # Public demo: the login screen offers the demo account; the demo user can't change its password.
 DEMO_MODE = env_bool("DEMO_MODE")
 DEMO_USERNAME = "demo"
+DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "sahod-demo")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

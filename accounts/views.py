@@ -21,7 +21,12 @@ class CsrfView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        return Response({"csrfToken": get_token(request), "demo": settings.DEMO_MODE})
+        demo = (
+            {"username": settings.DEMO_USERNAME, "password": settings.DEMO_PASSWORD}
+            if settings.DEMO_MODE
+            else None
+        )
+        return Response({"csrfToken": get_token(request), "demo": demo})
 
 
 # DRF skips CSRF for anonymous requests; login/sign-up need it anyway (login CSRF: an attacker
@@ -68,5 +73,11 @@ class LogoutView(APIView):
 
 
 class MeView(APIView):
+    """{"user": ...} or {"user": null}: the app can ask without causing a console error."""
+
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request):
-        return Response(MeSerializer(request.user).data)
+        if not request.user.is_authenticated:
+            return Response({"user": None})
+        return Response({"user": MeSerializer(request.user).data})
