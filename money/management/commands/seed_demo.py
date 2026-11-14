@@ -89,7 +89,7 @@ class Command(BaseCommand):
         for name, amount in (
             ("Cash", "1800"),
             ("GCash", "2400"),
-            ("Maya", "650"),
+            ("Maya", "2650"),
             ("Bank", "9200"),
             ("Savings", "15000"),
         ):
@@ -219,8 +219,9 @@ class Command(BaseCommand):
         return None
 
     def spend_day(self, user, day, today, wallets, cats, rng) -> None:
-        count = rng.randint(1, 3) if day < today else 2
-        for note, cat, low, high, wallet_names in rng.sample(DAILY, count):
+        # Today stays light (one jeepney ride) so the demo opens with room to spend.
+        picks = rng.sample(DAILY, rng.randint(1, 3)) if day < today else [DAILY[1]]
+        for note, cat, low, high, wallet_names in picks:
             if note in ("puregold", "shopee", "sine") and rng.random() < 0.7:
                 continue  # big-ticket items are occasional
             amount = D(rng.randint(low, high))

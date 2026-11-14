@@ -2,6 +2,8 @@
 
 **Know what's safe to spend until your next payday.**
 
+<p align="center"><img src="docs/demo.gif" width="320" alt="Sahod tour on a phone: safe to spend today, quick add 'kape 150 gcash', wallets, payday split preview, utang and paluwagan"></p>
+
 A money app built around paydays. Most budget apps plan by the month. Many Filipinos are paid
 twice a month (*kinsenas*: the 15th and 30th), and the money runs out *between paydays*. Sahod
 answers one question on its home screen: how much you can spend **today** without coming up short
