@@ -149,3 +149,30 @@ def test_split_amounts():
     assert cycle.split_amounts(D("20000"), rules) == [D("3000.00"), D("4000.00"), D("2500.00")]
     with pytest.raises(ValueError, match="more than"):
         cycle.split_amounts(D("5000"), [("fixed", D("3000")), ("percent", D("50"))])
+
+
+def test_paydays_from_spans_months():
+    s = Schedule(weekend_rule="none")
+    assert cycle.paydays_from(s, date(2026, 11, 16), 4) == [
+        date(2026, 11, 30),
+        date(2026, 12, 15),
+        date(2026, 12, 30),
+        date(2027, 1, 15),
+    ]
+    many = cycle.paydays_from(s, date(2026, 1, 1), 24)
+    assert len(many) == 24 and many[-1] == date(2026, 12, 30)
+
+
+def test_round_dates():
+    assert cycle.round_dates("weekly", date(2026, 11, 6), 3) == [
+        date(2026, 11, 6),
+        date(2026, 11, 13),
+        date(2026, 11, 20),
+    ]
+    assert cycle.round_dates("monthly", date(2026, 1, 31), 3) == [
+        date(2026, 1, 31),
+        date(2026, 2, 28),
+        date(2026, 3, 31),
+    ]
+    payday = cycle.round_dates("payday", date(2026, 11, 15), 2, Schedule(weekend_rule="none"))
+    assert payday == [date(2026, 11, 15), date(2026, 11, 30)]

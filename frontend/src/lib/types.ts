@@ -140,3 +140,33 @@ export interface Commitment {
   due_date: string;
   overdue: boolean;
 }
+
+export interface PaluwaganRound {
+  round: number;
+  date: string;
+  paid: boolean;
+  my_turn: boolean;
+  received: boolean;
+  contribution_id: number | null;
+  payout_id: number | null;
+}
+
+export interface Paluwagan {
+  id: number;
+  name: string;
+  share: string;
+  members: number;
+  my_turn: number;
+  frequency: "payday" | "weekly" | "monthly";
+  start_date: string;
+  wallet: number;
+  pot: string;
+  contributed: string;
+  total_to_pay: string;
+  my_turn_date: string;
+  received: boolean;
+  finished: boolean;
+  behind: number;
+  next_due: { round: number; date: string } | null;
+  rounds: PaluwaganRound[];
+}

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "money",
     "planning",
     "utang",
+    "paluwagan",
 ]
 
 AUTH_USER_MODEL = "accounts.User"

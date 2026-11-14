@@ -148,3 +148,27 @@ def split_amounts(amount: Decimal, rules: list[tuple[str, Decimal]]) -> list[Dec
     if sum(parts, Decimal("0")) > amount:
         raise ValueError("The split adds up to more than the amount received.")
     return parts
+
+
+def paydays_from(s: Schedule, start: dt.date, count: int) -> list[dt.date]:
+    """The first `count` paydays on or after `start` (for groups that pay out every payday)."""
+    found: list[dt.date] = []
+    cursor = start
+    while len(found) < count:
+        found += [d for d in paydays_around(s, cursor) if d >= start and d not in found]
+        found = sorted(found)
+        cursor = cursor + dt.timedelta(days=60)
+    return found[:count]
+
+
+def round_dates(
+    frequency: str, start: dt.date, count: int, s: Schedule | None = None
+) -> list[dt.date]:
+    """Dates of `count` rounds: "weekly", "monthly" (same day, clamped) or "payday"."""
+    if frequency == "weekly":
+        return [start + dt.timedelta(weeks=i) for i in range(count)]
+    if frequency == "monthly":
+        return [
+            clamp_day(*_add_months(start.year, start.month, i), start.day) for i in range(count)
+        ]
+    return paydays_from(s or Schedule(), start, count)

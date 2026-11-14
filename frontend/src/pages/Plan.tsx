@@ -43,6 +43,16 @@ export function Plan() {
         </a>
       </section>
 
+      <section className="card cta cta--soft">
+        <div>
+          <h2 className="card__title">Paluwagan</h2>
+          <p className="muted small">Your savings groups: shares due, and when your pot comes.</p>
+        </div>
+        <a className="btn" href="/paluwagan" onClick={(e) => (e.preventDefault(), navigate("/paluwagan"))}>
+          Open
+        </a>
+      </section>
+
       <ScheduleCard />
 
       <section className="card">

@@ -1107,3 +1107,94 @@ select {
 .link-btn--danger {
   color: var(--coral);
 }
+
+/* ---- paluwagan --------------------------------------------------------------------------- */
+.group {
+  display: grid;
+  gap: 14px;
+}
+.group__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.group__head .card__title {
+  margin-bottom: 2px;
+}
+.group__pot {
+  display: grid;
+  justify-items: end;
+  text-align: right;
+}
+.group__pot strong {
+  font: 800 1.35rem var(--font-display);
+  color: var(--green);
+}
+.rounds {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 2px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.round {
+  flex: none;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+.round__dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px dashed var(--line);
+  background: var(--surface);
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.round--paid .round__dot {
+  border: 0;
+  background: var(--green);
+  color: #fdf8ee;
+}
+.round--late .round__dot {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+.round--mine .round__dot {
+  box-shadow: 0 0 0 3px var(--mango);
+  font-size: 1rem;
+}
+.round--mine.round--paid .round__dot {
+  background: var(--mango);
+  color: #2a1f05;
+}
+.round__date {
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.group__progress .progress {
+  margin: 0 0 6px;
+}
+.group__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.group__actions .btn small {
+  font-weight: 500;
+  opacity: 0.85;
+}
+.group__actions .link-btn--danger {
+  margin-left: auto;
+}
+.alert--ok {
+  background: var(--green-soft);
+  color: var(--green);
+}

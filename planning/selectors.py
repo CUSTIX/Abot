@@ -4,6 +4,7 @@ import datetime as dt
 from decimal import Decimal
 
 from money import selectors as money
+from paluwagan import selectors as paluwagan
 from planning import cycle
 from planning.models import Bill, BillPayment, PaySchedule, SplitLine, SplitRule
 from utang import selectors as utang
@@ -57,9 +58,19 @@ def planned_transaction_ids(owner, start: dt.date, end: dt.date) -> set[int]:
 
 
 def upcoming_commitments(owner, last_day: dt.date) -> list[dict]:
-    """Other money that must go out before payday, set aside like bills: utang I owe that's
-    due (or overdue) by then."""
-    return [
+    """Other money that must go out before payday, set aside like bills: utang I owe and
+    paluwagan shares that are due (or overdue) by then."""
+    shares = [
+        {
+            "kind": "paluwagan",
+            "id": row["paluwagan"].pk,
+            "label": f"{row['paluwagan'].name} share (round {row['round']})",
+            "amount": row["paluwagan"].share,
+            "due_date": row["date"],
+        }
+        for row in paluwagan.shares_due_by(owner, last_day)
+    ]
+    debts = [
         {
             "kind": "utang",
             "id": row["utang"].pk,
@@ -69,6 +80,7 @@ def upcoming_commitments(owner, last_day: dt.date) -> list[dict]:
         }
         for row in utang.borrowed_due_by(owner, last_day)
     ]
+    return sorted(debts + shares, key=lambda c: c["due_date"])
 
 
 def today(owner, today: dt.date) -> dict:

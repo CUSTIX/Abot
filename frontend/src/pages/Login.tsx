@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { api, ApiError, getDemoLogin } from "../lib/api";
+import { api, ApiError, getDemoLogin, refreshCsrf } from "../lib/api";
 import { navigate } from "../lib/router";
 import type { User } from "../lib/types";
 
@@ -24,6 +24,7 @@ export function Login({ mode, onSignedIn }: { mode: "login" | "signup"; onSigned
           ? { username, password, first_name: name }
           : { username, password };
       const user = await api<User>(signup && !demo ? "auth/signup/" : "auth/login/", "POST", body);
+      await refreshCsrf(); // signing in rotates the CSRF token
       onSignedIn(user);
       navigate("/", true);
     } catch (err) {

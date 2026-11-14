@@ -126,7 +126,7 @@ export function Today({ onEdit }: { onEdit: (t: Transaction) => void }) {
                   </p>
                 </div>
                 <p className="bill__amount">{peso(c.amount)}</p>
-                <button type="button" className="btn btn--small" onClick={() => navigate(c.kind === "utang" ? "/utang" : "/plan")}>
+                <button type="button" className="btn btn--small" onClick={() => navigate(c.kind === "utang" ? "/utang" : "/paluwagan")}>
                   Open
                 </button>
               </li>

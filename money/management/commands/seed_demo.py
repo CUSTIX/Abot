@@ -21,6 +21,9 @@ from accounts import services as accounts
 from money import selectors
 from money import services as money
 from money.models import Category, Wallet
+from paluwagan import selectors as paluwagan_selectors
+from paluwagan import services as paluwagan
+from paluwagan.models import Paluwagan
 from planning import cycle
 from planning import services as planning
 from planning.models import Bill, SplitRule
@@ -186,6 +189,25 @@ class Command(BaseCommand):
             due_date=today + dt.timedelta(days=8),
             wallet=wallets["Cash"],
         )
+
+        # A paluwagan at the office: a share every payday, past shares paid, pot in round 4.
+        group = paluwagan.save(
+            Paluwagan(
+                owner=user,
+                name="Office paluwagan",
+                share=D("1000"),
+                members=6,
+                my_turn=4,
+                frequency="payday",
+                start_date=paydays[0] if paydays else today,
+                wallet=wallets["Bank"],
+            )
+        )
+        for row in paluwagan_selectors.rounds(group):
+            if row["date"] <= today and self.funded(user, ["Bank"], group.share, wallets):
+                paluwagan.record(
+                    group, kind="contribution", round_number=row["round"], date=row["date"]
+                )
 
     @staticmethod
     def funded(user, names, amount, wallets):
