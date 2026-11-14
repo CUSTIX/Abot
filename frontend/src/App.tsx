@@ -75,7 +75,7 @@ function Shell({ user, route, onSignedOut }: { user: User; route: Route; onSigne
       <header className="topbar">
         <div className="topbar__brand">
           <span className="logo logo--small" aria-hidden="true">₱</span>
-          <span>{TITLES[route] ?? "Sahod"}</span>
+          <h1 className="topbar__title">{TITLES[route] ?? "Sahod"}</h1>
         </div>
         <div className="topbar__user">
           <span className="muted small">{user.first_name || user.username}</span>

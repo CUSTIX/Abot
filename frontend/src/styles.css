@@ -6,7 +6,7 @@
   --surface-2: #f6efe0;
   --ink: #15241f;
   --ink-2: #44534d;
-  --ink-3: #6d7a74;
+  --ink-3: #5b6862;
   --line: #eadfca;
   --green: #0b5d4b;
   --green-2: #0f7a62;
@@ -1197,4 +1197,9 @@ select {
 .alert--ok {
   background: var(--green-soft);
   color: var(--green);
+}
+
+.topbar__title {
+  font: inherit;
+  margin: 0;
 }
