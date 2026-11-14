@@ -1,0 +1,13 @@
+{
+  "name": "Sahod",
+  "short_name": "Sahod",
+  "description": "Know what's safe to spend until your next payday.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fdf8ee",
+  "theme_color": "#0b5d4b",
+  "icons": [
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
