@@ -1239,3 +1239,8 @@ select {
   background: var(--green);
   color: #fdf8ee;
 }
+
+.export {
+  text-align: right;
+  font-size: 0.9rem;
+}

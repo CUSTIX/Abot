@@ -10,5 +10,6 @@ router.register("transactions", views.TransactionViewSet, basename="transaction"
 
 urlpatterns = [
     path("spending/", views.SpendingView.as_view(), name="spending"),
+    path("export.csv", views.ExportView.as_view(), name="export"),
     *router.urls,
 ]

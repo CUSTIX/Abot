@@ -1,5 +1,7 @@
+import csv
 import datetime as dt
 
+from django.http import HttpResponse
 from django.utils import timezone
 from rest_framework import serializers, status
 from rest_framework.response import Response
@@ -134,3 +136,40 @@ class SpendingView(APIView):
                 "categories": [{**r, "total": str(r["total"])} for r in rows],
             }
         )
+
+
+def _csv_cell(value) -> str:
+    """Spreadsheet-safe text: a cell starting with = + - @ (or tab/CR) would run as a formula in
+    Excel or Sheets (CSV injection), so it gets a leading apostrophe."""
+    text = "" if value is None else str(value)
+    return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
+
+
+EXPORT_COLUMNS = ["date", "type", "amount", "wallet", "to_wallet", "category", "note", "neutral"]
+
+
+class ExportView(APIView):
+    """All of your transactions (optionally filtered by date) as a CSV file."""
+
+    def get(self, request):
+        start, end = _date_param(request, "start"), _date_param(request, "end")
+        rows = selectors.transactions(request.user, start=start, end=end).order_by("date", "id")
+        response = HttpResponse(content_type="text/csv; charset=utf-8")
+        response["Content-Disposition"] = 'attachment; filename="sahod-transactions.csv"'
+        response.write("﻿")  # BOM: Excel opens UTF-8 (₱, ñ, emoji) correctly
+        writer = csv.writer(response)
+        writer.writerow(EXPORT_COLUMNS)
+        for t in rows.iterator():
+            writer.writerow(
+                [
+                    t.date.isoformat(),
+                    t.kind,
+                    f"{t.amount:.2f}",
+                    _csv_cell(t.wallet.name),
+                    _csv_cell(t.to_wallet.name if t.to_wallet else ""),
+                    _csv_cell(t.category.name if t.category else ""),
+                    _csv_cell(t.note),
+                    "yes" if t.neutral else "",
+                ]
+            )
+        return response

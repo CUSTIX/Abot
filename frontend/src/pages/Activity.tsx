@@ -86,6 +86,13 @@ export function Activity({ onEdit }: { onEdit: (t: Transaction) => void }) {
         </div>
       </div>
 
+      <p className="export">
+        <a href="/api/export.csv" download>
+          Export all to CSV
+        </a>
+        <span className="muted small"> · opens in Excel or Google Sheets</span>
+      </p>
+
       {!loading && rows.length === 0 && (
         <p className="empty">{search || kind ? "Nothing matches." : "No transactions yet."}</p>
       )}

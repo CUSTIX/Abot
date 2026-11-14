@@ -201,3 +201,26 @@ def test_quick_add_learns_the_words_you_file(api, wallets, categories):
         add(api, kind="expense", amount="45", wallet=cash, category=food.pk, note=note)
     food.refresh_from_db()
     assert food.keywords.count("siomai") == 1 and "jeep" not in food.keywords
+
+
+def test_csv_export_is_mine_only_and_spreadsheet_safe(api, other_api, wallets, categories):
+    add(
+        api,
+        kind="expense",
+        amount="99.5",
+        wallet=wallets["GCash"].pk,
+        category=categories["Fun"].pk,
+        note='=HYPERLINK("http://evil","click")',
+    )
+    add(api, kind="transfer", amount="10", wallet=wallets["Cash"].pk, to_wallet=wallets["Maya"].pk)
+    response = api.get("/api/export.csv")
+    assert response.status_code == 200 and response["Content-Type"].startswith("text/csv")
+    text = response.content.decode("utf-8-sig")
+    lines = text.strip().splitlines()
+    assert lines[0] == "date,type,amount,wallet,to_wallet,category,note,neutral"
+    assert len(lines) == 3
+    assert "'=HYPERLINK" in text and ",=HYPERLINK" not in text
+    assert "99.50" in text and "Cash,Maya" in text
+    other = other_api.get("/api/export.csv").content.decode("utf-8-sig").strip().splitlines()
+    assert other == [lines[0]]
+    assert api.get("/api/export.csv?start=2026-12-01").content.decode("utf-8-sig").count("\n") == 1
