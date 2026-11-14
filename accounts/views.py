@@ -6,11 +6,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from rest_framework import permissions, status
 from rest_framework.response import Response
-from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from accounts import services
 from accounts.serializers import LoginSerializer, MeSerializer, SignUpSerializer
+from core.throttles import ClientIPScopedThrottle
 
 
 @method_decorator(ensure_csrf_cookie, name="dispatch")
@@ -34,7 +34,7 @@ class CsrfView(APIView):
 @method_decorator(csrf_protect, name="dispatch")
 class SignUpView(APIView):
     permission_classes = [permissions.AllowAny]
-    throttle_classes = [ScopedRateThrottle]
+    throttle_classes = [ClientIPScopedThrottle]
     throttle_scope = "signup"
 
     def post(self, request):
@@ -51,7 +51,7 @@ class SignUpView(APIView):
 @method_decorator(csrf_protect, name="dispatch")
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
-    throttle_classes = [ScopedRateThrottle]
+    throttle_classes = [ClientIPScopedThrottle]
     throttle_scope = "login"
 
     def post(self, request):

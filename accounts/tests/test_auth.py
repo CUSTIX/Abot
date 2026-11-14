@@ -109,3 +109,31 @@ def test_every_api_url_needs_a_signed_in_user():
         assert response.status_code in (401, 403, 405), (url, response.status_code)
         checked += 1
     assert checked >= 10
+
+
+def test_a_forged_forwarded_for_header_does_not_dodge_the_login_limit():
+    """DRF's default would treat each fake X-Forwarded-For value as a new visitor."""
+    client = csrf_client()
+    codes = [
+        client.post(
+            "/api/auth/login/",
+            {"username": "x", "password": "y"},
+            format="json",
+            HTTP_X_FORWARDED_FOR=f"10.0.0.{i}",
+        ).status_code
+        for i in range(11)
+    ]
+    assert codes[-1] == 429
+
+
+def test_the_proxy_header_identifies_visitors_when_configured(settings):
+    from core.throttles import client_ip
+
+    class Req:
+        META = {"REMOTE_ADDR": "10.1.1.1", "HTTP_CF_CONNECTING_IP": "203.0.113.9"}
+
+    assert client_ip(Req) == "10.1.1.1"
+    settings.CLIENT_IP_HEADER = "HTTP_CF_CONNECTING_IP"
+    assert client_ip(Req) == "203.0.113.9"
+    Req.META["HTTP_CF_CONNECTING_IP"] = "not-an-ip"
+    assert client_ip(Req) == "unknown"

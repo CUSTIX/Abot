@@ -50,6 +50,10 @@ AUTH_USER_MODEL = "accounts.User"
 DEMO_MODE = env_bool("DEMO_MODE")
 DEMO_USERNAME = "demo"
 DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "sahod-demo")
+# Header (request.META key) with the real visitor IP, set by a proxy that overwrites it, e.g.
+# HTTP_CF_CONNECTING_IP behind Cloudflare/Render. Empty: use the socket address. Never point it at
+# X-Forwarded-For, which clients can forge. Used to rate-limit sign-in.
+CLIENT_IP_HEADER = os.environ.get("CLIENT_IP_HEADER", "")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
