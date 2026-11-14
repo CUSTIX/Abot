@@ -23,7 +23,8 @@ and money runs out *between paydays*. Sahod plans per pay cycle:
   padala, spending).
 - **Wallets** people actually use: GCash, Maya, cash, bank; transfers between them.
 - **Quick add**: `kape 150 gcash` → expense of ₱150, Food & drinks, from GCash.
-- Later: **utang** (who owes whom, partial payments) and **paluwagan** (rotating savings group).
+- **Utang** (who owes whom, partial payments) and **paluwagan** (rotating savings groups).
+  Their money moves are *neutral* transactions: they change balances, never count as spending.
 
 ## Stack
 
@@ -41,6 +42,8 @@ core/        shared base model, security headers, helpers
 accounts/    custom User, auth API (csrf, signup, login, logout, me)
 money/       wallets, categories, transactions, transfers
 planning/    pay schedule, bills, split rules, safe-to-spend, payday split
+utang/       lending/borrowing with partial payments (neutral money moves)
+paluwagan/   rotating savings groups (neutral money moves)
 frontend/    React app (src/), Vite config, Vitest tests
 ```
 

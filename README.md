@@ -20,6 +20,8 @@ to build and run. **All demo data is fake** (Faker).
 | **Quick add** | Type `kape 150 gcash`, `jeep 13 kahapon`, `+25k sahod bank` or `500 gcash to cash`. Amount, wallet, category, type and date are filled in as you type, and you can still edit them. |
 | **Wallets** | GCash, Maya, cash, bank, savings. Balances are computed from the ledger, never stored, so they can't drift. Transfers between wallets. |
 | **Bills** | Monthly bills (Meralco, rent, internet) are set aside until paid; one tap marks a due date paid. |
+| **Utang** | Who owes you and whom you owe, with partial payments. Lending moves your wallet balance but is never "spending"; utang you owe that's due before payday is set aside like a bill. |
+| **Paluwagan** | Rotating savings groups whose rounds can follow *your* paydays. A timeline shows paid, late and your turn; shares due before payday are set aside; your pot shows when it lands. |
 | **Installable** | A PWA: add it to your phone's home screen. API data is never cached. |
 
 ## Quickstart
@@ -71,6 +73,9 @@ dependency audit (pip-audit, npm audit), and a production Docker build.
   and CSRF cookies, CSRF enforced on login too (DRF skips it for anonymous users by default), login
   and sign-up throttled with counters in Postgres (stateless web container), `no-store` on
   API responses, a test that every API URL needs a signed-in user.
+- **Neutral money moves.** Lending, repaying and paluwagan shares change wallet balances (so
+  safe-to-spend is right) but are flagged neutral, so spending and income reports never count
+  them. Only the module that created them can change them.
 - **No router or state library.** Five screens; a 30-line router and a small context are enough.
   Fewer dependencies, less to audit.
 
@@ -82,6 +87,8 @@ core/        base models, security headers, shared API helpers
 accounts/    custom user, auth API (csrf, signup, login, logout, me)
 money/       wallets, categories, transactions, seed_demo
 planning/    pay schedule, bills, payday split, cycle math, Today summary
+utang/       lending and borrowing with partial payments
+paluwagan/   rotating savings groups
 frontend/    React + TypeScript app (Vite), PWA service worker, Vitest tests
 ```
 
@@ -90,6 +97,8 @@ frontend/    React + TypeScript app (Vite), PWA service worker, Vitest tests
 - [x] Wallets, transactions, transfers, quick add
 - [x] Pay schedule, bills, safe to spend today, payday split
 - [x] Installable PWA, demo data, CI
-- [ ] Utang (who owes whom, partial payments)
-- [ ] Paluwagan (rotating savings group)
-- [ ] Live demo (Render + Neon, free)
+- [x] Utang (who owes whom, partial payments)
+- [x] Paluwagan (rotating savings groups on your paydays)
+- [ ] Live demo (Render + Neon, free): ready to deploy, see [docs/deploy.md](docs/deploy.md)
+
+Security controls and how they're tested: [SECURITY.md](SECURITY.md).
