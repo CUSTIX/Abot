@@ -1,8 +1,8 @@
-/* Sahod service worker: makes the app installable and opens instantly.
+/* Abot service worker: makes the app installable and opens instantly.
    - Navigations: network first, cached app shell when offline.
    - /static/ files (fingerprinted by the build): cache first.
    - /api/ is never cached: money data must always be current and private. */
-const CACHE = "sahod-shell-v2"; // bump to drop old caches when the rules change
+const CACHE = "abot-shell-v3"; // bump to drop old caches when the rules change
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.add("/")).then(() => self.skipWaiting()));

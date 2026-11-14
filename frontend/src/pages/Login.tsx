@@ -45,7 +45,7 @@ export function Login({ mode, onSignedIn }: { mode: "login" | "signup"; onSigned
     <main className="auth">
       <div className="auth__brand">
         <span className="logo" aria-hidden="true">₱</span>
-        <h1>Sahod</h1>
+        <h1>Abot</h1>
         <p>Know what's safe to spend until your next payday.</p>
       </div>
       <form className="card form" onSubmit={(e) => submit(e)} noValidate>

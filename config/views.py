@@ -16,7 +16,7 @@ def spa(request, path=""):
     index = settings.FRONTEND_DIST / "index.html"
     if not index.exists():
         return HttpResponse(
-            "Sahod API is running. In development open the React app at http://localhost:5173",
+            "Abot API is running. In development open the React app at http://localhost:5173",
             content_type="text/plain",
         )
     response = FileResponse(index.open("rb"), content_type="text/html")

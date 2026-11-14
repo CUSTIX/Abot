@@ -4,7 +4,7 @@
 # See docs/deploy.md.
 services:
   - type: web
-    name: sahod
+    name: abot
     runtime: docker
     plan: free
     region: singapore
@@ -28,7 +28,7 @@ services:
       - key: DEMO_RESET_ON_START
         value: "true"
       - key: DEMO_PASSWORD
-        value: sahod-demo
+        value: abot-demo
       - key: CLIENT_IP_HEADER
         value: HTTP_CF_CONNECTING_IP # Cloudflare (in front of Render) overwrites this header
       - key: WEB_CONCURRENCY

@@ -54,7 +54,7 @@ export function Goals() {
           })}
         </ul>
       ) : (
-        <p className="muted">Saving for something? Siargao, a new phone, an emergency fund. Sahod tells you how much to set aside each payday.</p>
+        <p className="muted">Saving for something? Siargao, a new phone, an emergency fund. Abot tells you how much to set aside each payday.</p>
       )}
       <Sheet open={editing !== null} title={editing === "new" ? "New goal" : "Edit goal"} onClose={() => setEditing(null)}>
         {editing !== null && <GoalForm goal={editing === "new" ? null : editing} onDone={() => setEditing(null)} />}

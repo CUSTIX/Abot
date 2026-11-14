@@ -1,6 +1,6 @@
 # Security
 
-Sahod is a portfolio project. The public demo holds only fake data and resets on every start.
+Abot is a portfolio project. The public demo holds only fake data and resets on every start.
 
 ## Reporting a problem
 

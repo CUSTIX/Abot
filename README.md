@@ -1,11 +1,11 @@
-# Sahod
+# Abot
 
-**Know what's safe to spend until your next payday.**
+**Know what's safe to spend until your next payday.** *Abot* is Filipino for "reach", as in *aabot ba hanggang sahod?* (will the money last until payday?)
 
-<p align="center"><img src="docs/demo.gif" width="320" alt="Sahod tour on a phone: safe to spend today, quick add 'kape 150 gcash', wallets, payday split preview, utang and paluwagan"></p>
+<p align="center"><img src="docs/demo.gif" width="320" alt="Abot tour on a phone: safe to spend today, quick add 'kape 150 gcash', wallets, payday split preview, utang and paluwagan"></p>
 
 A money app built around paydays. Most budget apps plan by the month. Many Filipinos are paid
-twice a month (*kinsenas*: the 15th and 30th), and the money runs out *between paydays*. Sahod
+twice a month (*kinsenas*: the 15th and 30th), and the money runs out *between paydays*. Abot
 answers one question on its home screen: how much you can spend **today** without coming up short
 before sahod.
 
@@ -24,7 +24,7 @@ to build and run. **All demo data is fake** (Faker).
 | **Bills** | Monthly bills (Meralco, rent, internet) are set aside until paid; one tap marks a due date paid. |
 | **Utang** | Who owes you and whom you owe, with partial payments. Lending moves your wallet balance but is never "spending"; utang you owe that's due before payday is set aside like a bill. |
 | **Paluwagan** | Rotating savings groups whose rounds can follow *your* paydays. A timeline shows paid, late and your turn; shares due before payday are set aside; your pot shows when it lands. |
-| **Ipon goals** | "₱20,000 for Siargao by March": Sahod counts the paydays left and tells you how much to set aside **each sahod**. |
+| **Ipon goals** | "₱20,000 for Siargao by March": Abot counts the paydays left and tells you how much to set aside **each sahod**. |
 | **Cycle report** | This pay cycle next to the last one: received, spent, kept, your pace at the same point, category changes, biggest purchases. Export everything to CSV (spreadsheet-safe). |
 | **Installable** | A PWA: add it to your phone's home screen. API data is never cached. |
 
@@ -38,12 +38,12 @@ docker compose up --build       # Postgres, Django API (:8001), React dev server
 docker compose run --rm api python manage.py seed_demo
 ```
 
-Open <http://localhost:5173> and log in as **demo** / **sahod-demo**, or create an account.
+Open <http://localhost:5173> and log in as **demo** / **abot-demo**, or create an account.
 
 Production-style (built React served by Django + gunicorn, DEBUG off) on <http://localhost:8081>:
 
 ```bash
-docker compose -f docker-compose.prod.yml -p sahod-prod up --build -d
+docker compose -f docker-compose.prod.yml -p abot-prod up --build -d
 ```
 
 ## Tests and checks

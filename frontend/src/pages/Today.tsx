@@ -222,7 +222,7 @@ function GetStarted({ hasSchedule }: { hasSchedule: boolean }) {
     {
       done: hasSchedule,
       title: "Set your paydays",
-      text: "Twice a month, monthly or weekly. Sahod counts the days to your next one.",
+      text: "Twice a month, monthly or weekly. Abot counts the days to your next one.",
       to: "/plan",
     },
     {
@@ -235,7 +235,7 @@ function GetStarted({ hasSchedule }: { hasSchedule: boolean }) {
   return (
     <div className="stack">
       <section className="hero hero--ok">
-        <p className="hero__label">Welcome to Sahod</p>
+        <p className="hero__label">Welcome to Abot</p>
         <p className="hero__intro">Three quick steps, then this screen shows how much is safe to spend each day until payday.</p>
       </section>
       <ol className="steps">

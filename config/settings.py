@@ -1,4 +1,4 @@
-"""Sahod settings. Every environment-specific value comes from environment variables."""
+"""Abot settings. Every environment-specific value comes from environment variables."""
 
 import os
 from pathlib import Path
@@ -49,7 +49,7 @@ AUTH_USER_MODEL = "accounts.User"
 # Public demo: the login screen offers the demo account; the demo user can't change its password.
 DEMO_MODE = env_bool("DEMO_MODE")
 DEMO_USERNAME = "demo"
-DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "sahod-demo")
+DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "abot-demo")
 # Header (request.META key) with the real visitor IP, set by a proxy that overwrites it, e.g.
 # HTTP_CF_CONNECTING_IP behind Cloudflare/Render. Empty: use the socket address. Never point it at
 # X-Forwarded-For, which clients can forge. Used to rate-limit sign-in.
@@ -155,8 +155,8 @@ DATABASES = {
     if os.environ.get("DATABASE_URL")
     else {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "sahod"),
-        "USER": os.environ.get("POSTGRES_USER", "sahod"),
+        "NAME": os.environ.get("POSTGRES_DB", "abot"),
+        "USER": os.environ.get("POSTGRES_USER", "abot"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),

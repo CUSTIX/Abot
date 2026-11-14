@@ -1,6 +1,6 @@
-# Sahod
+# Abot
 
-Payday-first money app for Filipinos. "Know what's safe to spend until sahod."
+Abot: payday-first money app for Filipinos. "Know what's safe to spend until sahod."
 
 ## Goal (read this first)
 
@@ -15,7 +15,7 @@ and run**: no paid services or APIs.
 ## The idea
 
 Most budget apps plan by month. Many Filipinos are paid twice a month (kinsenas: 15th and 30th)
-and money runs out *between paydays*. Sahod plans per pay cycle:
+and money runs out *between paydays*. Abot plans per pay cycle:
 
 - **Safe to spend today**: spendable money minus unpaid bills due before the next payday,
   spread over the days left. The home screen.
@@ -62,7 +62,7 @@ docker compose run --rm api ruff check .
 docker compose run --rm api ruff format --check .
 docker compose run --rm frontend npm test        # Vitest
 docker compose run --rm frontend npm run lint    # ESLint + tsc
-docker compose -f docker-compose.prod.yml -p sahod-prod up --build -d   # production-style on :8081
+docker compose -f docker-compose.prod.yml -p abot-prod up --build -d   # production-style on :8081
 ```
 
 If a command here is wrong or missing, fix this file in the same change.

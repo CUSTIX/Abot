@@ -155,7 +155,7 @@ class ExportView(APIView):
         start, end = _date_param(request, "start"), _date_param(request, "end")
         rows = selectors.transactions(request.user, start=start, end=end).order_by("date", "id")
         response = HttpResponse(content_type="text/csv; charset=utf-8")
-        response["Content-Disposition"] = 'attachment; filename="sahod-transactions.csv"'
+        response["Content-Disposition"] = 'attachment; filename="abot-transactions.csv"'
         response.write("﻿")  # BOM: Excel opens UTF-8 (₱, ñ, emoji) correctly
         writer = csv.writer(response)
         writer.writerow(EXPORT_COLUMNS)

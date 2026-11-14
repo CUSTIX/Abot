@@ -32,7 +32,7 @@ Every push to `main` redeploys (`autoDeploy: true`).
 | `DJANGO_STATIC_MANIFEST` | `true` | Compressed, fingerprinted static files. |
 | `DEMO_MODE` | `true` | The login screen offers the demo account. |
 | `DEMO_RESET_ON_START` | `true` | Fresh fake data on every start, and visitor sign-ups are deleted. Demo only! |
-| `DEMO_PASSWORD` | `sahod-demo` | The demo account's password. |
+| `DEMO_PASSWORD` | `abot-demo` | The demo account's password. |
 | `CLIENT_IP_HEADER` | `HTTP_CF_CONNECTING_IP` | Real visitor IP for rate limiting (set by Cloudflare). |
 | `WEB_CONCURRENCY` | `2` | gunicorn workers (512 MB RAM on the free plan). |
 

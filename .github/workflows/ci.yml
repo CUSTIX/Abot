@@ -19,20 +19,20 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_DB: sahod
-          POSTGRES_USER: sahod
-          POSTGRES_PASSWORD: sahod
+          POSTGRES_DB: abot
+          POSTGRES_USER: abot
+          POSTGRES_PASSWORD: abot
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U sahod" --health-interval 5s --health-timeout 5s
+          --health-cmd "pg_isready -U abot" --health-interval 5s --health-timeout 5s
           --health-retries 10
     env:
       DJANGO_SECRET_KEY: ci-only-not-a-secret
       DJANGO_DEBUG: "False"
       DJANGO_ALLOWED_HOSTS: localhost
-      POSTGRES_DB: sahod
-      POSTGRES_USER: sahod
-      POSTGRES_PASSWORD: sahod
+      POSTGRES_DB: abot
+      POSTGRES_USER: abot
+      POSTGRES_PASSWORD: abot
       POSTGRES_HOST: localhost
     steps:
       - uses: actions/checkout@v4
@@ -93,4 +93,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker build --target prod -t sahod:prod .
+      - run: docker build --target prod -t abot:prod .
