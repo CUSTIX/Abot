@@ -189,6 +189,9 @@ STORAGES = {
     },
 }
 WHITENOISE_USE_FINDERS = not env_bool("DJANGO_STATIC_MANIFEST")
+# Python's mimetypes table has no entry for .webmanifest, so WhiteNoise would serve the PWA
+# manifest as application/octet-stream and browsers would refuse to install the app.
+WHITENOISE_MIMETYPES = {".webmanifest": "application/manifest+json"}
 
 if env_bool("DJANGO_HTTPS"):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
