@@ -181,3 +181,23 @@ def test_deleting_a_wallet_keeps_split_rules_that_use_it(api, wallets):
     )
     assert api.delete(f"/api/wallets/{wallets['Savings'].pk}/").json() == {"archived": True}
     assert SplitRule.objects.filter(pk=rule.pk).exists()
+
+
+def test_quick_add_learns_the_words_you_file(api, wallets, categories):
+    food = categories["Food & drinks"]
+    add(
+        api,
+        kind="expense",
+        amount="45",
+        wallet=wallets["Cash"].pk,
+        category=food.pk,
+        note="siomai sa kanto",
+    )
+    food.refresh_from_db()
+    assert food.keywords.endswith(", siomai")
+    # Known words, numbers and words another category owns are not learned again.
+    cash = wallets["Cash"].pk
+    for note in ("siomai", "jeep", "7"):
+        add(api, kind="expense", amount="45", wallet=cash, category=food.pk, note=note)
+    food.refresh_from_db()
+    assert food.keywords.count("siomai") == 1 and "jeep" not in food.keywords

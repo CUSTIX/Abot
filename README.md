@@ -19,7 +19,7 @@ to build and run. **All demo data is fake** (Faker).
 | **Safe to spend today** | Spendable wallets − unpaid bills due before the next payday − your buffer, spread over the days left. Today's budget is fixed in the morning, so spending lowers "left today", not tomorrow's math. Status turns *tight*, *over* or *short* with a plain-language hint. |
 | **Paydays that match real life** | Twice a month, monthly or weekly. A "30th" payday is Feb 28 in February. Weekend paydays move to the Friday before (or Monday after), like most payrolls. |
 | **Payday split** | When salary lands, rules move it in one step: 15% to Savings, ₱2,500 padala to family, ₱4,000 to GCash. These planned moves don't count as "spent today". |
-| **Quick add** | Type `kape 150 gcash`, `jeep 13 kahapon`, `+25k sahod bank` or `500 gcash to cash`. Amount, wallet, category, type and date are filled in as you type, and you can still edit them. |
+| **Quick add** | Type `kape 150 gcash`, `jeep 13 kahapon`, `+25k sahod bank` or `500 gcash to cash`. Amount, wallet, category, type and date are filled in as you type. It learns your words: file "siomai" under Food & drinks once and it knows next time. |
 | **Wallets** | GCash, Maya, cash, bank, savings. Balances are computed from the ledger, never stored, so they can't drift. Transfers between wallets. |
 | **Bills** | Monthly bills (Meralco, rent, internet) are set aside until paid; one tap marks a due date paid. |
 | **Utang** | Who owes you and whom you owe, with partial payments. Lending moves your wallet balance but is never "spending"; utang you owe that's due before payday is set aside like a bill. |

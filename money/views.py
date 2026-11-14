@@ -104,10 +104,13 @@ class TransactionViewSet(OwnedViewSet):
         )
 
     def perform_create(self, serializer):
-        serializer.instance = services.record(owner=self.request.user, **serializer.validated_data)
+        txn = services.record(owner=self.request.user, **serializer.validated_data)
+        services.learn_keyword(txn.category, txn.note)
+        serializer.instance = txn
 
     def perform_update(self, serializer):
-        services.update(serializer.instance, **serializer.validated_data)
+        txn = services.update(serializer.instance, **serializer.validated_data)
+        services.learn_keyword(txn.category, txn.note)
 
     def perform_destroy(self, instance):
         services.delete(instance)

@@ -1,5 +1,6 @@
 """Writes and rules for wallets, categories and transactions."""
 
+import re
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
@@ -204,3 +205,25 @@ def save_category(category: Category) -> Category:
         raise ValidationError({"name": "You already have a category with that name."})
     category.save()
     return category
+
+
+def learn_keyword(category: Category | None, note: str) -> bool:
+    """Quick add learns: the first word of a note you filed under a category becomes one of that
+    category's keywords, unless any of your categories already knows it. Returns True if learned.
+
+    "siomai" filed under Food & drinks -> next time "siomai 45" is guessed as Food & drinks."""
+    if category is None:
+        return False
+    word = re.sub(r"[^\w]", "", (note.split() or [""])[0].lower())
+    if not (2 <= len(word) <= 20) or word.isdigit():
+        return False
+    for other in Category.objects.filter(owner=category.owner):
+        known = {k.strip().lower() for k in other.keywords.split(",")} | {other.name.lower()}
+        if word in known:
+            return False
+    keywords = ", ".join(k for k in (category.keywords.strip(), word) if k)
+    if len(keywords) > Category._meta.get_field("keywords").max_length:
+        return False
+    category.keywords = keywords
+    category.save(update_fields=["keywords", "updated_at"])
+    return True
