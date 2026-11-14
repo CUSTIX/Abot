@@ -71,10 +71,10 @@ class Transaction(OwnedModel):
     kind = models.CharField(max_length=8, choices=Kind.choices, db_index=True)
     amount = models.DecimalField(**MONEY)
     date = models.DateField(db_index=True)
-    wallet = models.ForeignKey(Wallet, on_delete=models.PROTECT, related_name="transactions")
+    wallet = models.ForeignKey(Wallet, on_delete=models.RESTRICT, related_name="transactions")
     # Transfers only: where the money went.
     to_wallet = models.ForeignKey(
-        Wallet, null=True, blank=True, on_delete=models.PROTECT, related_name="transfers_in"
+        Wallet, null=True, blank=True, on_delete=models.RESTRICT, related_name="transfers_in"
     )
     category = models.ForeignKey(
         Category, null=True, blank=True, on_delete=models.SET_NULL, related_name="transactions"

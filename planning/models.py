@@ -73,7 +73,7 @@ class Bill(OwnedModel):
     name = models.CharField(max_length=40)
     amount = models.DecimalField(**MONEY)
     due_day = models.PositiveSmallIntegerField(validators=DAY)
-    wallet = models.ForeignKey("money.Wallet", on_delete=models.PROTECT, related_name="+")
+    wallet = models.ForeignKey("money.Wallet", on_delete=models.RESTRICT, related_name="+")
     category = models.ForeignKey(
         "money.Category", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
