@@ -24,6 +24,8 @@ to build and run. **All demo data is fake** (Faker).
 | **Bills** | Monthly bills (Meralco, rent, internet) are set aside until paid; one tap marks a due date paid. |
 | **Utang** | Who owes you and whom you owe, with partial payments. Lending moves your wallet balance but is never "spending"; utang you owe that's due before payday is set aside like a bill. |
 | **Paluwagan** | Rotating savings groups whose rounds can follow *your* paydays. A timeline shows paid, late and your turn; shares due before payday are set aside; your pot shows when it lands. |
+| **Ipon goals** | "₱20,000 for Siargao by March": Sahod counts the paydays left and tells you how much to set aside **each sahod**. |
+| **Cycle report** | This pay cycle next to the last one: received, spent, kept, your pace at the same point, category changes, biggest purchases. Export everything to CSV (spreadsheet-safe). |
 | **Installable** | A PWA: add it to your phone's home screen. API data is never cached. |
 
 ## Quickstart
