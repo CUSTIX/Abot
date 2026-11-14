@@ -16,6 +16,8 @@ export default defineConfig(({ command }) => ({
   plugins: [react()],
   server: {
     port: 5173,
+    // In Docker on Windows/macOS, file changes in a bind mount don't send events: poll instead.
+    watch: process.env.VITE_POLL === "true" ? { usePolling: true, interval: 300 } : undefined,
     proxy: {
       "/api": { target: apiUrl },
       "/admin": { target: apiUrl },

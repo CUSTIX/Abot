@@ -35,6 +35,7 @@ services:
     command: sh -c "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0"
     environment:
       API_URL: http://api:8000
+      VITE_POLL: "true"  # bind mounts on Windows/macOS send no file events
     ports:
       - "127.0.0.1:5173:5173"
     volumes:
