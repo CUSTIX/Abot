@@ -2,8 +2,11 @@
 
     python manage.py seed_demo          # create the demo user if missing
     python manage.py seed_demo --reset  # delete the demo user's data and recreate it
+    python manage.py seed_demo --reset --wipe-visitors  # public demo: also delete sign-ups
 
-Only the demo user is touched; other accounts are never deleted.
+Without --wipe-visitors only the demo user is touched. The public demo (bin/start.sh with
+DEMO_MODE) wipes visitor accounts on every start: nothing a visitor types in is kept for long.
+Staff and superuser accounts are never deleted.
 """
 
 import datetime as dt
@@ -59,10 +62,22 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--reset", action="store_true", help="Recreate the demo user's data.")
+        parser.add_argument(
+            "--wipe-visitors",
+            action="store_true",
+            help="Also delete every other non-staff account (public demo only).",
+        )
 
     @transaction.atomic
-    def handle(self, *args, reset=False, **options):
+    def handle(self, *args, reset=False, wipe_visitors=False, **options):
         User = get_user_model()
+        if wipe_visitors:
+            visitors = User.objects.filter(is_staff=False, is_superuser=False).exclude(
+                username=settings.DEMO_USERNAME
+            )
+            count = visitors.count()
+            visitors.delete()
+            self.stdout.write(f"Removed {count} visitor account(s).")
         existing = User.objects.filter(username=settings.DEMO_USERNAME).first()
         if existing and not reset:
             self.stdout.write("Demo user already exists (use --reset to recreate it).")

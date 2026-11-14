@@ -16,7 +16,8 @@ The demo runs on free tiers: a **Render** web service (Docker, sleeps after ~15 
 3. When asked for `DATABASE_URL`, paste the Neon string. `DJANGO_SECRET_KEY` is generated for you.
 4. Deploy. The container's [`bin/start.sh`](../bin/start.sh):
    - runs migrations and creates the throttle cache table;
-   - resets the demo data (`seed_demo --reset`, because `DEMO_RESET_ON_START=true`);
+   - resets the demo data and deletes visitor sign-ups (`seed_demo --reset --wipe-visitors`,
+     because `DEMO_RESET_ON_START=true`);
    - starts gunicorn on `$PORT`.
 
 Every push to `main` redeploys (`autoDeploy: true`).
@@ -30,7 +31,7 @@ Every push to `main` redeploys (`autoDeploy: true`).
 | `DJANGO_HTTPS` | `true` | HTTPS redirect, secure cookies, HSTS. |
 | `DJANGO_STATIC_MANIFEST` | `true` | Compressed, fingerprinted static files. |
 | `DEMO_MODE` | `true` | The login screen offers the demo account. |
-| `DEMO_RESET_ON_START` | `true` | Fresh fake data on every start. Demo only! |
+| `DEMO_RESET_ON_START` | `true` | Fresh fake data on every start, and visitor sign-ups are deleted. Demo only! |
 | `DEMO_PASSWORD` | `sahod-demo` | The demo account's password. |
 | `CLIENT_IP_HEADER` | `HTTP_CF_CONNECTING_IP` | Real visitor IP for rate limiting (set by Cloudflare). |
 | `WEB_CONCURRENCY` | `2` | gunicorn workers (512 MB RAM on the free plan). |

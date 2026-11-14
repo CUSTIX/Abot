@@ -86,6 +86,9 @@ export function Login({ mode, onSignedIn }: { mode: "login" | "signup"; onSigned
         <button className="btn btn--primary btn--block" disabled={busy}>
           {busy ? "One moment…" : signup ? "Create account" : "Log in"}
         </button>
+        {getDemoLogin() && signup && (
+          <p className="muted small">This is a public demo: accounts are deleted when the server restarts. Don't enter real finances.</p>
+        )}
         {getDemoLogin() && !signup && (
           <button type="button" className="btn btn--accent btn--block" disabled={busy} onClick={(e) => submit(e, true)}>
             Try the demo account

@@ -23,3 +23,12 @@ def test_seed_demo_builds_a_believable_history_and_resets_only_the_demo(make_use
     demo = get_user_model().objects.get(username=settings.DEMO_USERNAME)  # a fresh user
     assert Transaction.objects.filter(owner=demo).count() == first  # same fake data again
     assert get_user_model().objects.filter(pk=other.pk).exists()
+
+
+def test_wipe_visitors_keeps_staff_and_recreates_the_demo(make_user, django_user_model):
+    visitor = make_user("visitor1")
+    admin = django_user_model.objects.create_user("boss", password="x-long-pass-1", is_staff=True)
+    call_command("seed_demo", "--reset", "--wipe-visitors")
+    assert not django_user_model.objects.filter(pk=visitor.pk).exists()
+    assert django_user_model.objects.filter(pk=admin.pk).exists()
+    assert django_user_model.objects.filter(username="demo").exists()
