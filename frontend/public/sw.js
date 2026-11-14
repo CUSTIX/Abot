@@ -2,7 +2,7 @@
    - Navigations: network first, cached app shell when offline.
    - /static/ files (fingerprinted by the build): cache first.
    - /api/ is never cached: money data must always be current and private. */
-const CACHE = "sahod-shell-v1";
+const CACHE = "sahod-shell-v2"; // bump to drop old caches when the rules change
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.add("/")).then(() => self.skipWaiting()));
@@ -26,8 +26,13 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put("/", copy));
+          // Only a real, successful app page may become the offline shell (not /healthz/'s
+          // "ok", an error page, or a file download).
+          const html = (response.headers.get("content-type") || "").includes("text/html");
+          if (response.ok && html && !response.redirected) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put("/", copy));
+          }
           return response;
         })
         .catch(() => caches.match("/")),
