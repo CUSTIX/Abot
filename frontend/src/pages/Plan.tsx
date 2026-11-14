@@ -6,6 +6,7 @@ import { parseAmount, peso, toDecimalString } from "../lib/money";
 import { useLoad, useStore } from "../lib/store";
 import type { Bill, Schedule, SplitRule } from "../lib/types";
 import { Sheet } from "../components/Sheet";
+import { navigate } from "../lib/router";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const ordinal = (n: number) => `${n}${["th", "st", "nd", "rd"][n % 100 > 10 && n % 100 < 14 ? 0 : n % 10] ?? "th"}`;
@@ -30,6 +31,16 @@ export function Plan() {
         <button type="button" className="btn btn--accent" onClick={() => setSheet("pay")}>
           Receive pay
         </button>
+      </section>
+
+      <section className="card cta cta--soft">
+        <div>
+          <h2 className="card__title">Utang</h2>
+          <p className="muted small">Who owes you, and whom you owe. Partial payments too.</p>
+        </div>
+        <a className="btn" href="/utang" onClick={(e) => (e.preventDefault(), navigate("/utang"))}>
+          Open
+        </a>
       </section>
 
       <ScheduleCard />

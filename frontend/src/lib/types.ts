@@ -37,6 +37,8 @@ export interface Transaction {
   to_wallet: number | null;
   category: number | null;
   note: string;
+  neutral: boolean;
+  source: "" | "utang" | "paluwagan";
   wallet_name: string;
   to_wallet_name: string | null;
   category_name: string | null;
@@ -75,6 +77,7 @@ export interface Today {
   left_today: string;
   free_until_payday: string;
   bills: BillRow[];
+  commitments: Commitment[];
   cycle_spending: { category_id: number | null; name: string; emoji: string; total: string }[];
   recent: Transaction[];
 }
@@ -108,4 +111,32 @@ export interface SplitRule {
   category: number | null;
   sort_order: number;
   active: boolean;
+}
+
+export interface UtangPayment {
+  id: number;
+  amount: string;
+  date: string;
+}
+
+export interface Utang {
+  id: number;
+  person: string;
+  direction: "lent" | "borrowed";
+  amount: string;
+  date: string;
+  due_date: string | null;
+  note: string;
+  paid: string;
+  remaining: string;
+  payments: UtangPayment[];
+}
+
+export interface Commitment {
+  kind: "utang" | "paluwagan";
+  id: number;
+  label: string;
+  amount: string;
+  due_date: string;
+  overdue: boolean;
 }

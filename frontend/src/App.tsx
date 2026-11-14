@@ -10,6 +10,7 @@ import { Activity } from "./pages/Activity";
 import { Login } from "./pages/Login";
 import { Plan } from "./pages/Plan";
 import { Today } from "./pages/Today";
+import { Utang } from "./pages/Utang";
 import { Wallets } from "./pages/Wallets";
 
 const TABS: { route: Route; label: string; icon: string }[] = [
@@ -23,6 +24,7 @@ const TITLES: Record<string, string> = {
   "/activity": "Activity",
   "/wallets": "Wallets",
   "/plan": "Plan",
+  "/utang": "Utang",
 };
 
 export function App() {
@@ -55,6 +57,9 @@ function Shell({ user, route, onSignedOut }: { user: User; route: Route; onSigne
   const { message } = useStore();
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
+  // Utang and paluwagan moves are managed on their own screens, not as plain transactions.
+  const edit = (txn: Transaction) =>
+    txn.source ? navigate(txn.source === "utang" ? "/utang" : "/plan") : setEditing(txn);
 
   async function logout() {
     await api("auth/logout/", "POST").catch(() => undefined);
@@ -79,10 +84,11 @@ function Shell({ user, route, onSignedOut }: { user: User; route: Route; onSigne
       </header>
 
       <main className="content" id="main">
-        {route === "/" && <Today onEdit={setEditing} />}
-        {route === "/activity" && <Activity onEdit={setEditing} />}
+        {route === "/" && <Today onEdit={edit} />}
+        {route === "/activity" && <Activity onEdit={edit} />}
         {route === "/wallets" && <Wallets />}
         {route === "/plan" && <Plan />}
+        {route === "/utang" && <Utang />}
       </main>
 
       <nav className="tabbar" aria-label="Main">
@@ -93,7 +99,7 @@ function Shell({ user, route, onSignedOut }: { user: User; route: Route; onSigne
           ＋
         </button>
         {TABS.slice(2).map((t) => (
-          <Tab key={t.route} {...t} active={route === t.route} />
+          <Tab key={t.route} {...t} active={route === t.route || (t.route === "/plan" && route === "/utang")} />
         ))}
       </nav>
 

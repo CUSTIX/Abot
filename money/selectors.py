@@ -77,7 +77,9 @@ def transactions(
 def expense_total(
     owner, *, start: dt.date, end: dt.date, wallet_ids=None, exclude_ids=()
 ) -> Decimal:
-    qs = Transaction.objects.filter(owner=owner, kind="expense", date__gte=start, date__lte=end)
+    qs = Transaction.objects.filter(
+        owner=owner, kind="expense", neutral=False, date__gte=start, date__lte=end
+    )
     if wallet_ids is not None:
         qs = qs.filter(wallet_id__in=wallet_ids)
     if exclude_ids:
@@ -87,7 +89,9 @@ def expense_total(
 
 def spending_by_category(owner, *, start: dt.date, end: dt.date) -> list[dict]:
     rows = (
-        Transaction.objects.filter(owner=owner, kind="expense", date__gte=start, date__lte=end)
+        Transaction.objects.filter(
+            owner=owner, kind="expense", neutral=False, date__gte=start, date__lte=end
+        )
         .values("category__id", "category__name", "category__emoji")
         .annotate(total=Sum("amount"), count=Count("id"))
         .order_by("-total")

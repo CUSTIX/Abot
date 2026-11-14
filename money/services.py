@@ -109,7 +109,37 @@ def record(*, owner, kind, amount, date, wallet, to_wallet=None, category=None, 
     )
 
 
+def record_neutral(
+    *, owner, kind: str, amount, date, wallet, note: str, source: str
+) -> Transaction:
+    """A money move that isn't spending or income (lending, paying back, a paluwagan share).
+    It changes the wallet's balance; reports and "spent today" ignore it."""
+    if kind not in (Transaction.Kind.EXPENSE, Transaction.Kind.INCOME):
+        raise ValidationError({"kind": "Neutral moves are money out or money in."})
+    validate_transaction(owner=owner, kind=kind, amount=amount, wallet=wallet)
+    return Transaction.objects.create(
+        owner=owner,
+        kind=kind,
+        amount=amount,
+        date=date,
+        wallet=wallet,
+        note=note.strip()[:120],
+        neutral=True,
+        source=source,
+    )
+
+
+SOURCE_LABELS = {"utang": "Utang", "paluwagan": "Paluwagan"}
+
+
+def _check_editable(txn: Transaction) -> None:
+    if txn.source:
+        where = SOURCE_LABELS.get(txn.source, txn.source)
+        raise ValidationError({"detail": f"This belongs to {where}. Change it there."})
+
+
 def update(txn: Transaction, **fields) -> Transaction:
+    _check_editable(txn)
     for name, value in fields.items():
         setattr(txn, name, value)
     if txn.kind == Transaction.Kind.TRANSFER:
@@ -129,7 +159,10 @@ def update(txn: Transaction, **fields) -> Transaction:
     return txn
 
 
-def delete(txn: Transaction) -> None:
+def delete(txn: Transaction, *, owned_by: str = "") -> None:
+    """Delete a transaction. Utang/paluwagan moves can only be deleted by their own module."""
+    if txn.source != owned_by:
+        _check_editable(txn)
     txn.delete()
 
 

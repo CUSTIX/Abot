@@ -24,6 +24,7 @@ from money.models import Category, Wallet
 from planning import cycle
 from planning import services as planning
 from planning.models import Bill, SplitRule
+from utang import services as utang
 
 D = Decimal
 # (note, category, low, high, wallets) - everyday spending in pesos
@@ -161,6 +162,29 @@ class Command(BaseCommand):
             wallet=wallets["GCash"],
             category=cats["Side hustle"],
             note="logo commission",
+        )
+
+        # Utang: a friend paying back in parts, and a short loan due before payday.
+        pedro = utang.create(
+            owner=user,
+            person="Pedro",
+            direction="lent",
+            amount=D("1500"),
+            date=today - dt.timedelta(days=20),
+            wallet=self.funded(user, ["GCash"], D("1500"), wallets),
+            note="pang-tuition",
+        )
+        utang.add_payment(
+            pedro, amount=D("500"), date=today - dt.timedelta(days=6), wallet=wallets["GCash"]
+        )
+        utang.create(
+            owner=user,
+            person="Ate Lyn",
+            direction="borrowed",
+            amount=D("2000"),
+            date=today - dt.timedelta(days=3),
+            due_date=today + dt.timedelta(days=8),
+            wallet=wallets["Cash"],
         )
 
     @staticmethod

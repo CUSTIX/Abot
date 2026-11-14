@@ -6,6 +6,7 @@ from decimal import Decimal
 from money import selectors as money
 from planning import cycle
 from planning.models import Bill, BillPayment, PaySchedule, SplitLine, SplitRule
+from utang import selectors as utang
 
 ZERO = Decimal("0")
 
@@ -55,6 +56,21 @@ def planned_transaction_ids(owner, start: dt.date, end: dt.date) -> set[int]:
     return set(bill_txns) | set(split_txns)
 
 
+def upcoming_commitments(owner, last_day: dt.date) -> list[dict]:
+    """Other money that must go out before payday, set aside like bills: utang I owe that's
+    due (or overdue) by then."""
+    return [
+        {
+            "kind": "utang",
+            "id": row["utang"].pk,
+            "label": f"Utang to {row['utang'].person}",
+            "amount": row["remaining"],
+            "due_date": row["utang"].due_date,
+        }
+        for row in utang.borrowed_due_by(owner, last_day)
+    ]
+
+
 def today(owner, today: dt.date) -> dict:
     sched = schedule(owner)
     plan = sched.as_schedule() if sched else cycle.Schedule()
@@ -62,8 +78,12 @@ def today(owner, today: dt.date) -> dict:
     balances = money.balances(owner, as_of=today)
     spendable_ids = list(money.wallets(owner).filter(spendable=True).values_list("pk", flat=True))
     spendable = sum((balances.get(pk, ZERO) for pk in spendable_ids), ZERO)
-    window = bills_in_window(owner, start, next_payday - dt.timedelta(days=1))
-    reserved = sum((r["bill"].amount for r in window if not r["paid"]), ZERO)
+    last_day = next_payday - dt.timedelta(days=1)
+    window = bills_in_window(owner, start, last_day)
+    commitments = upcoming_commitments(owner, last_day)
+    reserved = sum((r["bill"].amount for r in window if not r["paid"]), ZERO) + sum(
+        (c["amount"] for c in commitments), ZERO
+    )
     spent_today = money.expense_total(
         owner,
         start=today,
@@ -84,6 +104,7 @@ def today(owner, today: dt.date) -> dict:
         "has_schedule": sched is not None,
         "safe": safe,
         "bills": window,
+        "commitments": commitments,
         "cycle_spending": money.spending_by_category(owner, start=start, end=today)[:6],
         "recent": list(money.transactions(owner)[:6]),
     }

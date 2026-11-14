@@ -1,8 +1,8 @@
 /* A tiny router: five screens don't need a routing library. */
 import { useEffect, useState } from "react";
 
-export type Route = "/" | "/activity" | "/wallets" | "/plan" | "/login" | "/signup";
-const ROUTES: Route[] = ["/", "/activity", "/wallets", "/plan", "/login", "/signup"];
+export type Route = "/" | "/activity" | "/wallets" | "/plan" | "/utang" | "/login" | "/signup";
+const ROUTES: Route[] = ["/", "/activity", "/wallets", "/plan", "/utang", "/login", "/signup"];
 
 function current(): Route {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";

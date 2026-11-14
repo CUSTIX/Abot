@@ -114,7 +114,25 @@ export function Today({ onEdit }: { onEdit: (t: Transaction) => void }) {
       </section>
 
       <section className="card">
-        <h2 className="card__title">Bills this cycle</h2>
+        <h2 className="card__title">Due before payday</h2>
+        {data.commitments.length > 0 && (
+          <ul className="list commitments">
+            {data.commitments.map((c) => (
+              <li key={`${c.kind}-${c.id}`} className="bill">
+                <div>
+                  <p className="bill__name">{c.label}</p>
+                  <p className={`small ${c.overdue ? "danger" : "muted"}`}>
+                    {c.overdue ? `Overdue since ${shortDate(c.due_date)}` : `Due ${dayLabel(c.due_date, data.today)}`}
+                  </p>
+                </div>
+                <p className="bill__amount">{peso(c.amount)}</p>
+                <button type="button" className="btn btn--small" onClick={() => navigate(c.kind === "utang" ? "/utang" : "/plan")}>
+                  Open
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         {data.bills.length === 0 ? (
           <p className="muted">
             No bills before payday.{" "}

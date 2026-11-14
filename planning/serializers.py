@@ -101,6 +101,14 @@ def today_payload(data: dict, context: dict) -> dict:
         "status": safe.status,
         **{name: str(getattr(safe, name).quantize(CENT)) for name in money_fields},
         "bills": [bill_row(r, safe.today) for r in data["bills"]],
+        "commitments": [
+            {
+                **c,
+                "amount": str(c["amount"].quantize(CENT)),
+                "overdue": c["due_date"] < safe.today,
+            }
+            for c in data["commitments"]
+        ],
         "cycle_spending": [
             {**r, "total": str(r["total"].quantize(CENT))} for r in data["cycle_spending"]
         ],

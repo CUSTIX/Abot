@@ -80,6 +80,10 @@ class Transaction(OwnedModel):
         Category, null=True, blank=True, on_delete=models.SET_NULL, related_name="transactions"
     )
     note = models.CharField(max_length=120, blank=True)
+    # Neutral money moves (utang, paluwagan): they change wallet balances, but are never counted
+    # as spending or income. Created and edited only by the module that owns them.
+    neutral = models.BooleanField(default=False)
+    source = models.CharField(max_length=20, blank=True)  # "utang", "paluwagan" or ""
 
     class Meta:
         ordering = ("-date", "-id")

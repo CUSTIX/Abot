@@ -18,7 +18,13 @@ export function TxnRow({
       ? `${txn.wallet_name} → ${txn.to_wallet_name}`
       : txn.note || txn.category_name || (txn.kind === "income" ? "Income" : "Expense");
   const meta = [
-    txn.kind === "transfer" ? "Transfer" : txn.category_name ?? "Uncategorised",
+    txn.kind === "transfer"
+      ? "Transfer"
+      : txn.source === "utang"
+        ? "Utang"
+        : txn.source === "paluwagan"
+          ? "Paluwagan"
+          : (txn.category_name ?? "Uncategorised"),
     txn.kind === "transfer" ? null : txn.wallet_name,
     showDate ? dayLabel(txn.date, today) : null,
   ]
@@ -29,14 +35,14 @@ export function TxnRow({
   return (
     <li>
       <button type="button" className="txn" onClick={onClick}>
-        <span className={`txn__icon txn__icon--${txn.kind}`} aria-hidden="true">
-          {txn.kind === "transfer" ? "⇄" : txn.category_emoji || (txn.kind === "income" ? "＋" : "•")}
+        <span className={`txn__icon txn__icon--${txn.neutral ? "transfer" : txn.kind}`} aria-hidden="true">
+          {txn.kind === "transfer" ? "⇄" : txn.source === "utang" ? "🤝" : txn.source === "paluwagan" ? "🪙" : txn.category_emoji || (txn.kind === "income" ? "＋" : "•")}
         </span>
         <span className="txn__text">
           <span className="txn__title">{title}</span>
           <span className="txn__meta">{meta}</span>
         </span>
-        <span className={`txn__amount txn__amount--${txn.kind}`}>
+        <span className={`txn__amount txn__amount--${txn.neutral ? "neutral" : txn.kind}`}>
           {sign}
           {peso(txn.amount)}
         </span>

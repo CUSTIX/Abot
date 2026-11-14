@@ -7,6 +7,7 @@ urlpatterns = [
     path("api/auth/", include("accounts.urls")),
     path("api/", include("money.urls")),
     path("api/", include("planning.urls")),
+    path("api/", include("utang.urls")),
     path("admin/", admin.site.urls),
     path("healthz/", views.healthz, name="healthz"),
     path("sw.js", views.service_worker, name="service-worker"),

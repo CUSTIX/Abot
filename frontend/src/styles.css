@@ -977,3 +977,133 @@ select {
     transition: none !important;
   }
 }
+
+/* ---- utang ------------------------------------------------------------------------------- */
+.toolbar--row {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+.cta--soft {
+  background: var(--mango-soft);
+}
+.utang-totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.utang-totals__in,
+.utang-totals__out {
+  font: 800 1.6rem var(--font-display);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.utang-totals__in {
+  color: var(--green);
+}
+.utang-totals__out {
+  color: var(--coral);
+}
+.utang-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.utang {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+}
+.utang__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 800 1.1rem var(--font-display);
+  background: var(--green-soft);
+  color: var(--green);
+}
+.utang--borrowed .utang__avatar {
+  background: var(--coral-soft);
+  color: var(--coral);
+}
+.utang__body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.utang__person {
+  font-weight: 750;
+}
+.utang__meta {
+  font-size: 0.82rem;
+  color: var(--ink-3);
+}
+.utang__bar {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  overflow: hidden;
+  margin-top: 4px;
+}
+.utang__bar span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  border-radius: inherit;
+}
+.utang--borrowed .utang__bar span {
+  background: var(--coral);
+}
+.utang__amount {
+  display: grid;
+  justify-items: end;
+  font: 800 1.05rem var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.utang__amount small {
+  font: 500 0.75rem var(--font-body);
+  color: var(--ink-3);
+}
+.utang-head {
+  text-align: center;
+  display: grid;
+  gap: 2px;
+}
+.utang-head__amount {
+  font: 800 2.4rem var(--font-display);
+  letter-spacing: -0.03em;
+}
+.payment {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+}
+.payment__amount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.txn__amount--neutral {
+  color: var(--ink-2);
+}
+.commitments {
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.link-btn--danger {
+  color: var(--coral);
+}

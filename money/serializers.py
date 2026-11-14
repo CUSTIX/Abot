@@ -58,7 +58,19 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["id", "kind", "amount", "date", "wallet", "to_wallet", "category", "note"]
+        fields = [
+            "id",
+            "kind",
+            "amount",
+            "date",
+            "wallet",
+            "to_wallet",
+            "category",
+            "note",
+            "neutral",
+            "source",
+        ]
+        read_only_fields = ["neutral", "source"]
 
     def to_representation(self, txn):
         data = super().to_representation(txn)
