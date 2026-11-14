@@ -1203,3 +1203,39 @@ select {
   font: inherit;
   margin: 0;
 }
+
+/* ---- first run --------------------------------------------------------------------------- */
+.hero__intro {
+  margin-top: 8px;
+  font: 600 1.15rem/1.4 var(--font-display);
+}
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+.step .card__title {
+  margin: 0 0 2px;
+}
+.step__no {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  background: var(--mango-soft);
+  color: #2a1f05;
+}
+.step.is-done .step__no {
+  background: var(--green);
+  color: #fdf8ee;
+}

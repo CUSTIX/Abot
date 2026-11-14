@@ -21,6 +21,10 @@ export function Today({ onEdit }: { onEdit: (t: Transaction) => void }) {
 
   if (error && !data) return <p className="alert">{error}</p>;
   if (!data) return <div className="skeleton" aria-busy="true" aria-label="Loading" />;
+  // A brand-new account has no money recorded yet: show how to start, not a red "short" alarm.
+  if (data.recent.length === 0 && toCentavos(data.spendable) === 0) {
+    return <GetStarted hasSchedule={data.has_schedule} />;
+  }
 
   const perDay = toCentavos(data.per_day);
   const left = toCentavos(data.left_today);
@@ -203,6 +207,52 @@ export function Today({ onEdit }: { onEdit: (t: Transaction) => void }) {
           <p className="muted">Nothing yet. Tap + and try “kape 150 gcash”.</p>
         )}
       </section>
+    </div>
+  );
+}
+
+function GetStarted({ hasSchedule }: { hasSchedule: boolean }) {
+  const steps: { done: boolean; title: string; text: string; to: "/wallets" | "/plan" }[] = [
+    {
+      done: false,
+      title: "Enter what's in your wallets",
+      text: "Open each wallet (GCash, cash, bank…) and set its starting balance.",
+      to: "/wallets",
+    },
+    {
+      done: hasSchedule,
+      title: "Set your paydays",
+      text: "Twice a month, monthly or weekly. Sahod counts the days to your next one.",
+      to: "/plan",
+    },
+    {
+      done: false,
+      title: "Add your monthly bills",
+      text: "Rent, Meralco, internet. They're set aside before anything is called safe to spend.",
+      to: "/plan",
+    },
+  ];
+  return (
+    <div className="stack">
+      <section className="hero hero--ok">
+        <p className="hero__label">Welcome to Sahod</p>
+        <p className="hero__intro">Three quick steps, then this screen shows how much is safe to spend each day until payday.</p>
+      </section>
+      <ol className="steps">
+        {steps.map((s, i) => (
+          <li key={s.title} className={`card step${s.done ? " is-done" : ""}`}>
+            <span className="step__no" aria-hidden="true">{s.done ? "✓" : i + 1}</span>
+            <div>
+              <h2 className="card__title">{s.title}</h2>
+              <p className="muted small">{s.text}</p>
+            </div>
+            <button type="button" className="btn btn--small" onClick={() => navigate(s.to)}>
+              {s.done ? "Edit" : "Start"}
+            </button>
+          </li>
+        ))}
+      </ol>
+      <p className="muted small center">Or just tap ＋ and type “kape 150 gcash”.</p>
     </div>
   );
 }
