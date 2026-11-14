@@ -170,3 +170,32 @@ export interface Paluwagan {
   next_due: { round: number; date: string } | null;
   rounds: PaluwaganRound[];
 }
+
+export interface Goal {
+  id: number;
+  name: string;
+  emoji: string;
+  target: string;
+  target_date: string;
+  wallet: number;
+  wallet_name: string;
+  saved: string;
+  missing: string;
+  paydays_left: number;
+  per_payday: string;
+  status: "saving" | "done" | "late";
+}
+
+export interface CycleReport {
+  start: string;
+  end: string;
+  next_payday: string;
+  days: number;
+  income: string;
+  spending: string;
+  kept: string;
+  daily_average: string;
+  categories: { name: string; emoji: string; total: string; previous: string }[];
+  biggest: Transaction[];
+  previous: { start: string; end: string; days: number; income: string; spending: string; kept: string };
+}

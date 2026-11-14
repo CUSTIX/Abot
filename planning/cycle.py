@@ -8,7 +8,7 @@ payday and an optional buffer.
 import calendar
 import datetime as dt
 from dataclasses import dataclass
-from decimal import ROUND_DOWN, Decimal
+from decimal import ROUND_DOWN, ROUND_UP, Decimal
 
 SEMI_MONTHLY, MONTHLY, WEEKLY = "semi_monthly", "monthly", "weekly"
 SHIFT_NONE, SHIFT_BEFORE, SHIFT_AFTER = "none", "before", "after"
@@ -172,3 +172,25 @@ def round_dates(
             clamp_day(*_add_months(start.year, start.month, i), start.day) for i in range(count)
         ]
     return paydays_from(s or Schedule(), start, count)
+
+
+def paydays_until(s: Schedule, today: dt.date, end: dt.date) -> list[dt.date]:
+    """Paydays after today, up to and including `end`."""
+    if end <= today:
+        return []
+    days, cursor = [], today
+    while True:
+        batch = [d for d in paydays_around(s, cursor) if today < d <= end and d not in days]
+        if not batch and cursor > end:
+            return sorted(days)
+        days += batch
+        cursor += dt.timedelta(days=60)
+
+
+def per_payday(missing: Decimal, paydays_left: int) -> Decimal:
+    """How much to set aside each payday to close the gap (rounded up to the peso)."""
+    if missing <= 0:
+        return Decimal("0")
+    if paydays_left <= 0:
+        return missing
+    return (missing / paydays_left).quantize(Decimal("1"), rounding=ROUND_UP)

@@ -29,7 +29,7 @@ from paluwagan import services as paluwagan
 from paluwagan.models import Paluwagan
 from planning import cycle
 from planning import services as planning
-from planning.models import Bill, SplitRule
+from planning.models import Bill, Goal, SplitRule
 from utang import services as utang
 
 D = Decimal
@@ -204,6 +204,22 @@ class Command(BaseCommand):
             due_date=today + dt.timedelta(days=8),
             wallet=wallets["Cash"],
         )
+
+        # Ipon goals, saved in the Savings wallet (filled in date order).
+        for name, emoji, target, months in (
+            ("Emergency fund", "🛟", "30000", 3),
+            ("Siargao trip", "🏝️", "15000", 7),
+        ):
+            planning.save_goal(
+                Goal(
+                    owner=user,
+                    name=name,
+                    emoji=emoji,
+                    target=D(target),
+                    target_date=today + dt.timedelta(days=30 * months),
+                    wallet=wallets["Savings"],
+                )
+            )
 
         # A paluwagan at the office: a share every payday, past shares paid, pot in round 4.
         group = paluwagan.save(

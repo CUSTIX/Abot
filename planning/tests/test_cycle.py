@@ -176,3 +176,17 @@ def test_round_dates():
     ]
     payday = cycle.round_dates("payday", date(2026, 11, 15), 2, Schedule(weekend_rule="none"))
     assert payday == [date(2026, 11, 15), date(2026, 11, 30)]
+
+
+def test_paydays_until_and_per_payday():
+    s = Schedule(weekend_rule="none")
+    assert cycle.paydays_until(s, date(2026, 11, 20), date(2027, 1, 15)) == [
+        date(2026, 11, 30),
+        date(2026, 12, 15),
+        date(2026, 12, 30),
+        date(2027, 1, 15),
+    ]
+    assert cycle.paydays_until(s, date(2026, 11, 20), date(2026, 11, 20)) == []
+    assert cycle.per_payday(D("10000"), 3) == D("3334")  # rounded up so you don't fall short
+    assert cycle.per_payday(D("0"), 3) == 0
+    assert cycle.per_payday(D("500"), 0) == D("500")  # no paydays left: all of it now

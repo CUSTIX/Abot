@@ -10,13 +10,15 @@ from rest_framework.views import APIView
 from core.api import OwnedViewSet
 from money.serializers import TransactionSerializer
 from planning import selectors, services
-from planning.models import Bill, BillPayment, SplitRule
+from planning.models import Bill, BillPayment, Goal, SplitRule
 from planning.serializers import (
     BillSerializer,
+    GoalSerializer,
     PayBillSerializer,
     ReceivePaySerializer,
     ScheduleSerializer,
     SplitRuleSerializer,
+    goal_row,
     today_payload,
 )
 
@@ -157,4 +159,56 @@ class PaydayView(APIView):
                 ).data,
             },
             status=status.HTTP_201_CREATED,
+        )
+
+
+class GoalViewSet(OwnedViewSet):
+    serializer_class = GoalSerializer
+    pagination_class = None
+    http_method_names = ["get", "post", "patch", "delete"]
+
+    def queryset_for(self, user):
+        return Goal.objects.filter(owner=user)
+
+    def list(self, request, *args, **kwargs):
+        rows = selectors.goals(request.user, timezone.localdate())
+        return Response([goal_row(r) for r in rows])
+
+    def perform_create(self, serializer):
+        serializer.instance = services.save_goal(
+            Goal(owner=self.request.user, **serializer.validated_data)
+        )
+
+    def perform_update(self, serializer):
+        goal = serializer.instance
+        for name, value in serializer.validated_data.items():
+            setattr(goal, name, value)
+        services.save_goal(goal)
+
+
+class ReportView(APIView):
+    """This pay cycle compared with the previous one."""
+
+    def get(self, request):
+        data = selectors.cycle_report(request.user, timezone.localdate())
+
+        def m(value):
+            return str(value.quantize(Decimal("0.01")))
+
+        return Response(
+            {
+                **{k: data[k] for k in ("start", "end", "next_payday", "days")},
+                **{k: m(data[k]) for k in ("income", "spending", "kept", "daily_average")},
+                "categories": [
+                    {**c, "total": m(c["total"]), "previous": m(c["previous"])}
+                    for c in data["categories"]
+                ],
+                "biggest": TransactionSerializer(
+                    data["biggest"], many=True, context={"request": request}
+                ).data,
+                "previous": {
+                    **{k: data["previous"][k] for k in ("start", "end", "days")},
+                    **{k: m(data["previous"][k]) for k in ("income", "spending", "kept")},
+                },
+            }
         )

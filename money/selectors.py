@@ -106,3 +106,23 @@ def spending_by_category(owner, *, start: dt.date, end: dt.date) -> list[dict]:
         }
         for r in rows
     ]
+
+
+def totals(owner, *, start: dt.date, end: dt.date) -> dict[str, Decimal]:
+    """Real income and spending between two dates (neutral moves and transfers excluded)."""
+    qs = Transaction.objects.filter(owner=owner, neutral=False, date__gte=start, date__lte=end)
+    agg = qs.aggregate(
+        income=Coalesce(Sum("amount", filter=Q(kind="income")), Value(ZERO), **_SUM),
+        spending=Coalesce(Sum("amount", filter=Q(kind="expense")), Value(ZERO), **_SUM),
+    )
+    return {"income": agg["income"], "spending": agg["spending"]}
+
+
+def biggest_expenses(owner, *, start: dt.date, end: dt.date, limit: int = 3):
+    return (
+        Transaction.objects.filter(
+            owner=owner, kind="expense", neutral=False, date__gte=start, date__lte=end
+        )
+        .select_related("wallet", "category")
+        .order_by("-amount", "-date")[:limit]
+    )

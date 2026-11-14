@@ -5,7 +5,7 @@ from rest_framework import serializers
 from core.api import OwnedPrimaryKeyField
 from money.models import Category, Wallet
 from money.serializers import TransactionSerializer
-from planning.models import Bill, PaySchedule, SplitRule
+from planning.models import Bill, Goal, PaySchedule, SplitRule
 
 MONEY = {"max_digits": 12, "decimal_places": 2}
 CENT = Decimal("0.01")
@@ -113,4 +113,26 @@ def today_payload(data: dict, context: dict) -> dict:
             {**r, "total": str(r["total"].quantize(CENT))} for r in data["cycle_spending"]
         ],
         "recent": TransactionSerializer(data["recent"], many=True, context=context).data,
+    }
+
+
+class GoalSerializer(serializers.ModelSerializer):
+    target = serializers.DecimalField(**MONEY, min_value=Decimal("0.01"))
+    wallet = OwnedPrimaryKeyField(queryset=Wallet.objects.none())
+
+    class Meta:
+        model = Goal
+        fields = ["id", "name", "emoji", "target", "target_date", "wallet"]
+
+
+def goal_row(row: dict) -> dict:
+    goal = row["goal"]
+    return {
+        **GoalSerializer(goal).data,
+        "wallet_name": goal.wallet.name,
+        "saved": str(row["saved"].quantize(CENT)),
+        "missing": str(max(row["missing"], Decimal("0")).quantize(CENT)),
+        "paydays_left": row["paydays_left"],
+        "per_payday": str(row["per_payday"].quantize(CENT)),
+        "status": row["status"],
     }

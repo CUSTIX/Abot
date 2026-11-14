@@ -6,7 +6,7 @@ from decimal import Decimal
 from money import selectors as money
 from paluwagan import selectors as paluwagan
 from planning import cycle
-from planning.models import Bill, BillPayment, PaySchedule, SplitLine, SplitRule
+from planning.models import Bill, BillPayment, Goal, PaySchedule, SplitLine, SplitRule
 from utang import selectors as utang
 
 ZERO = Decimal("0")
@@ -119,4 +119,83 @@ def today(owner, today: dt.date) -> dict:
         "commitments": commitments,
         "cycle_spending": money.spending_by_category(owner, start=start, end=today)[:6],
         "recent": list(money.transactions(owner)[:6]),
+    }
+
+
+def goals(owner, today: dt.date) -> list[dict]:
+    """Each ipon goal with progress (its wallet's balance) and how much to save per payday.
+    Goals sharing a wallet are filled in order of target date."""
+    sched = schedule(owner)
+    plan = sched.as_schedule() if sched else cycle.Schedule()
+    balances = money.balances(owner, as_of=today)
+    left_in_wallet: dict[int, Decimal] = {}
+    rows = []
+    for goal in Goal.objects.filter(owner=owner).select_related("wallet"):
+        wallet_balance = max(balances.get(goal.wallet_id, ZERO), ZERO)
+        available = left_in_wallet.get(goal.wallet_id, wallet_balance)
+        saved = min(available, goal.target)
+        left_in_wallet[goal.wallet_id] = available - saved
+        missing = goal.target - saved
+        paydays = cycle.paydays_until(plan, today, goal.target_date)
+        status = "done" if missing <= 0 else ("late" if goal.target_date < today else "saving")
+        rows.append(
+            {
+                "goal": goal,
+                "saved": saved,
+                "missing": missing,
+                "paydays_left": len(paydays),
+                "per_payday": cycle.per_payday(missing, len(paydays)),
+                "status": status,
+            }
+        )
+    return rows
+
+
+def cycle_report(owner, today: dt.date) -> dict:
+    """This pay cycle so far next to the whole previous cycle: income, spending, what you kept,
+    and how each category moved."""
+    sched = schedule(owner)
+    plan = sched.as_schedule() if sched else cycle.Schedule()
+    start, next_payday = cycle.current_cycle(plan, today)
+    prev_start, _ = cycle.current_cycle(plan, start - dt.timedelta(days=1))
+    prev_end = start - dt.timedelta(days=1)
+
+    now, before = (
+        money.totals(owner, start=start, end=today),
+        money.totals(owner, start=prev_start, end=prev_end),
+    )
+    previous_rows = money.spending_by_category(owner, start=prev_start, end=prev_end)
+    previous = {r["name"]: r["total"] for r in previous_rows}
+    current = money.spending_by_category(owner, start=start, end=today)
+    seen = {r["name"] for r in current}
+    names = [r["name"] for r in current] + [n for n in previous if n not in seen]
+    emoji = {r["name"]: r["emoji"] for r in [*previous_rows, *current]}
+    days = (today - start).days + 1
+    return {
+        "start": start,
+        "end": today,
+        "next_payday": next_payday,
+        "days": days,
+        "income": now["income"],
+        "spending": now["spending"],
+        "kept": now["income"] - now["spending"],
+        "daily_average": (now["spending"] / days).quantize(Decimal("0.01")),
+        "categories": [
+            {
+                "name": name,
+                "emoji": emoji.get(name, ""),
+                "total": next((r["total"] for r in current if r["name"] == name), ZERO),
+                "previous": previous.get(name, ZERO),
+            }
+            for name in names
+        ],
+        "biggest": list(money.biggest_expenses(owner, start=start, end=today)),
+        "previous": {
+            "start": prev_start,
+            "end": prev_end,
+            "days": (prev_end - prev_start).days + 1,
+            "income": before["income"],
+            "spending": before["spending"],
+            "kept": before["income"] - before["spending"],
+        },
     }

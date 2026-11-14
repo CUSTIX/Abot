@@ -4,6 +4,7 @@ import { dayLabel, isoDate } from "../lib/dates";
 import { peso, toCentavos } from "../lib/money";
 import { useStore } from "../lib/store";
 import type { Kind, Page, Transaction } from "../lib/types";
+import { Report } from "../components/Report";
 import { TxnRow } from "../components/TxnRow";
 
 const FILTERS: { value: Kind | ""; label: string }[] = [
@@ -14,6 +15,22 @@ const FILTERS: { value: Kind | ""; label: string }[] = [
 ];
 
 export function Activity({ onEdit }: { onEdit: (t: Transaction) => void }) {
+  const [view, setView] = useState<"list" | "report">("list");
+  return (
+    <div className="stack">
+      <div className="segmented segmented--big" role="radiogroup" aria-label="View">
+        {(["list", "report"] as const).map((v) => (
+          <button key={v} type="button" role="radio" aria-checked={view === v} className={view === v ? "is-on" : ""} onClick={() => setView(v)}>
+            {v === "list" ? "Transactions" : "Cycle report"}
+          </button>
+        ))}
+      </div>
+      {view === "list" ? <TransactionList onEdit={onEdit} /> : <Report onEdit={onEdit} />}
+    </div>
+  );
+}
+
+function TransactionList({ onEdit }: { onEdit: (t: Transaction) => void }) {
   const { version } = useStore();
   const [kind, setKind] = useState<Kind | "">("");
   const [query, setQuery] = useState("");

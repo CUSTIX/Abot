@@ -173,3 +173,27 @@ class SplitLine(models.Model):
 
     def __str__(self) -> str:
         return f"{self.split} line {self.pk}"
+
+
+class Goal(OwnedModel):
+    """An ipon goal: reach `target` in a savings wallet by `target_date`. Progress is that
+    wallet's balance, so moving money there (payday split, transfers) is how you save."""
+
+    name = models.CharField(max_length=40)
+    emoji = models.CharField(max_length=8, blank=True)
+    target = models.DecimalField(**MONEY)
+    target_date = models.DateField()
+    wallet = models.ForeignKey("money.Wallet", on_delete=models.RESTRICT, related_name="+")
+
+    class Meta:
+        ordering = ("target_date", "id")
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(target__gt=0),
+                name="goal_target_positive",
+                violation_error_message="The target must be more than zero.",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return self.name

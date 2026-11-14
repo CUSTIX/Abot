@@ -5,6 +5,7 @@ import { isoDate } from "../lib/dates";
 import { parseAmount, peso, toDecimalString } from "../lib/money";
 import { useLoad, useStore } from "../lib/store";
 import type { Bill, Schedule, SplitRule } from "../lib/types";
+import { Goals } from "../components/Goals";
 import { Sheet } from "../components/Sheet";
 import { navigate } from "../lib/router";
 
@@ -32,6 +33,8 @@ export function Plan() {
           Receive pay
         </button>
       </section>
+
+      <Goals />
 
       <section className="card cta cta--soft">
         <div>

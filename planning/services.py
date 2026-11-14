@@ -9,7 +9,15 @@ from django.db import transaction as db_transaction
 
 from money import services as money
 from planning import cycle
-from planning.models import Bill, BillPayment, PaydaySplit, PaySchedule, SplitLine, SplitRule
+from planning.models import (
+    Bill,
+    BillPayment,
+    Goal,
+    PaydaySplit,
+    PaySchedule,
+    SplitLine,
+    SplitRule,
+)
 
 
 def schedule_for(owner) -> PaySchedule:
@@ -126,3 +134,12 @@ def receive_pay(
         )
         SplitLine.objects.create(split=split, rule=rule, transaction=txn)
     return split
+
+
+def save_goal(goal: Goal) -> Goal:
+    _check_owner(goal.owner, goal.wallet)
+    if not goal.name.strip():
+        raise ValidationError({"name": "Give your goal a name."})
+    goal.name = goal.name.strip()
+    goal.save()
+    return goal
