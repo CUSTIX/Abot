@@ -163,3 +163,21 @@ def test_cannot_book_into_someone_elses_wallet_or_category(api, other_api, walle
         format="json",
     )
     assert response.status_code == 400 and "category" in response.json()
+
+
+def test_a_wallet_a_bill_still_uses_is_archived_not_a_server_error(api, wallets):
+    from planning.models import Bill
+
+    Bill.objects.create(owner=api.user, name="Rent", amount="1", due_day=1, wallet=wallets["Bank"])
+    response = api.delete(f"/api/wallets/{wallets['Bank'].pk}/")
+    assert response.status_code == 200 and response.json() == {"archived": True}
+
+
+def test_deleting_a_wallet_keeps_split_rules_that_use_it(api, wallets):
+    from planning.models import SplitRule
+
+    rule = SplitRule.objects.create(
+        owner=api.user, name="Ipon", mode="percent", value="10", to_wallet=wallets["Savings"]
+    )
+    assert api.delete(f"/api/wallets/{wallets['Savings'].pk}/").json() == {"archived": True}
+    assert SplitRule.objects.filter(pk=rule.pk).exists()

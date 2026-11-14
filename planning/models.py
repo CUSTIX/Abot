@@ -124,7 +124,7 @@ class SplitRule(OwnedModel):
     mode = models.CharField(max_length=7, choices=Mode.choices, default=Mode.FIXED)
     value = models.DecimalField(max_digits=12, decimal_places=2)
     to_wallet = models.ForeignKey(
-        "money.Wallet", null=True, blank=True, on_delete=models.CASCADE, related_name="+"
+        "money.Wallet", null=True, blank=True, on_delete=models.RESTRICT, related_name="+"
     )
     category = models.ForeignKey(
         "money.Category", null=True, blank=True, on_delete=models.CASCADE, related_name="+"

@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction as db_transaction
-from django.db.models import Q
+from django.db.models import ProtectedError, Q, RestrictedError
 
 from money.models import Category, Transaction, Wallet
 
@@ -181,12 +181,16 @@ def save_wallet(wallet: Wallet) -> Wallet:
 def delete_wallet(wallet: Wallet) -> str:
     """A wallet with history is archived (its past stays correct); an unused one is deleted."""
     used = Transaction.objects.filter(Q(wallet=wallet) | Q(to_wallet=wallet)).exists()
-    if used:
-        wallet.archived = True
-        wallet.save(update_fields=["archived", "updated_at"])
-        return "archived"
-    wallet.delete()
-    return "deleted"
+    if not used:
+        try:
+            with db_transaction.atomic():
+                wallet.delete()
+            return "deleted"
+        except (RestrictedError, ProtectedError):
+            pass  # a bill or paluwagan still pays from it: keep it, archived
+    wallet.archived = True
+    wallet.save(update_fields=["archived", "updated_at"])
+    return "archived"
 
 
 def save_category(category: Category) -> Category:
