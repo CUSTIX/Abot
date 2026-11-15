@@ -146,7 +146,11 @@ def database_from_url(url: str) -> dict:
         "PASSWORD": unquote(parts.password or ""),
         "HOST": parts.hostname or "",
         "PORT": str(parts.port or ""),
-        "OPTIONS": dict(parse_qsl(parts.query)),
+        # Hosted Postgres sits across a TLS handshake and may be suspended: keep connections for a
+        # minute, check them before reuse, and give up after 10 s instead of hanging a worker.
+        "CONN_MAX_AGE": 60,
+        "CONN_HEALTH_CHECKS": True,
+        "OPTIONS": {"connect_timeout": 10, **dict(parse_qsl(parts.query))},
     }
 
 

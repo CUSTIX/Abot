@@ -42,6 +42,14 @@ def test_without_a_build_the_root_explains_the_dev_server(client, settings, tmp_
 def test_database_url_parsing():
     db = database_from_url("postgresql://u:p%40ss@host.example:5433/sahod?sslmode=require")
     assert db["PASSWORD"] == "p@ss" and db["PORT"] == "5433"
-    assert db["OPTIONS"] == {"sslmode": "require"}
+    assert db["OPTIONS"] == {"connect_timeout": 10, "sslmode": "require"}
+    assert db["CONN_MAX_AGE"] == 60 and db["CONN_HEALTH_CHECKS"] is True
     with pytest.raises(ImproperlyConfigured):
         database_from_url("mysql://x")
+
+
+def test_livez_answers_without_touching_the_database(client, django_assert_num_queries):
+    """The uptime heartbeat pings this, so the free database can still suspend when idle."""
+    with django_assert_num_queries(0):
+        response = client.get("/livez/")
+    assert response.status_code == 200 and response.content == b"ok"

@@ -11,6 +11,7 @@ urlpatterns = [
     path("api/", include("paluwagan.urls")),
     path("admin/", admin.site.urls),
     path("healthz/", views.healthz, name="healthz"),
+    path("livez/", views.livez, name="livez"),
     path("sw.js", views.service_worker, name="service-worker"),
     # Everything else is a client-side route of the React app.
     re_path(r"^(?!api/|admin/|static/)(?P<path>.*)$", views.spa, name="spa"),

@@ -10,6 +10,12 @@ def healthz(request):
     return HttpResponse("ok", content_type="text/plain")
 
 
+def livez(request):
+    """Keep-awake ping: proves the web process answers without touching the database, so the
+    free Neon database can still suspend when nobody uses the app."""
+    return HttpResponse("ok", content_type="text/plain")
+
+
 def spa(request, path=""):
     """The React app's index.html for every non-API URL (client-side routing). In development
     the app is served by Vite on :5173 instead, so this explains where to go."""
