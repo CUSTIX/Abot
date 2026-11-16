@@ -2,6 +2,8 @@
 
 **Know what's safe to spend until your next payday.** *Abot* is Filipino for "reach", as in *aabot ba hanggang sahod?* (will the money last until payday?)
 
+**Live demo:** https://abot-ph.onrender.com (sign in with the demo account: `demo` / `abot-demo`; data resets nightly. The first visit after a quiet spell can take about a minute while the free server wakes.)
+
 <p align="center"><img src="docs/demo.gif" width="320" alt="Abot tour on a phone: safe to spend today, quick add 'kape 150 gcash', wallets, payday split preview, utang and paluwagan"></p>
 
 A money app built around paydays. Most budget apps plan by the month. Many Filipinos are paid
@@ -103,6 +105,6 @@ frontend/    React + TypeScript app (Vite), PWA service worker, Vitest tests
 - [x] Installable PWA, demo data, CI
 - [x] Utang (who owes whom, partial payments)
 - [x] Paluwagan (rotating savings groups on your paydays)
-- [ ] Live demo (Render + Neon, free): ready to deploy, see [docs/deploy.md](docs/deploy.md)
+- [x] Live demo (Render + Neon, free): https://abot-ph.onrender.com, see [docs/deploy.md](docs/deploy.md)
 
 Security controls and how they're tested: [SECURITY.md](SECURITY.md).
