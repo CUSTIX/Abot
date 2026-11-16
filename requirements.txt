@@ -4,4 +4,4 @@ djangorestframework==3.18.3
 psycopg[binary]==3.3.8
 gunicorn==26.2.0
 whitenoise==6.11.0
-Faker==40.50.0  # demo data (`manage.py seed_demo`)
+Faker==40.54.0  # demo data (`manage.py seed_demo`)
